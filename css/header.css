@@ -1,0 +1,36 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 42px 34px;
+}
+
+header div {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+header h2 {
+    font-size: 27px;
+    line-height: 32px;
+    font-weight: 400;
+    color: var(--red-color);
+    opacity: 100%;
+    margin: 0;
+}
+
+.title {
+    position: relative;
+    font-weight: 900;
+}
+
+.title:before {
+    position: absolute;
+    left: 0;
+    top: 32px;
+    height: 4px;
+    width: 54px;
+    content: '';
+    background-color: var(--red-color);
+}
