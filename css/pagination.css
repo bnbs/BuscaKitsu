@@ -1,0 +1,42 @@
+.pagination {
+    flex-grow: 1;
+    margin: 16px 0;
+}
+
+.arrow {
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    cursor: pointer;
+}
+
+.arrow-left {
+    border-right: 12px solid var(--red-color);
+    margin-right: 2px;
+}
+
+.arrow-right {
+    border-left: 12px solid var(--red-color);
+    margin-left: 2px;
+}
+
+.page-number {
+    width: 32px;
+    height: 32px;
+    background-color: #FFFFFF;
+    color: var(--red-color);
+    font-size: 21px;
+    line-height: 24px;
+    font-weight: 400;
+    margin: 0 10px;
+    border: 1px solid var(--red-color);
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.default-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
