@@ -64,3 +64,21 @@ tr.character:hover {
     text-overflow: ellipsis;
     max-height: 72px;
 }
+
+@media (max-width: 700px) {
+    div.table {
+        margin: 0;
+    }
+
+    th:first-child {
+        border: none;
+    }
+
+    th:last-child {
+        display: none;
+    }
+
+    .character td:last-child {
+        display: none;
+    }
+}

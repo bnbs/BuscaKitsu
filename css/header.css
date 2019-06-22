@@ -33,3 +33,23 @@ header h2 {
     content: '';
     background-color: var(--red-color);
 }
+
+@media (max-width: 700px) {
+    header {
+        margin: 12px 42px 18px;
+    }
+
+    header h2 {
+        font-size: 16px;
+        line-height: 19px;
+    }
+
+    header > h2 {
+        display: none;
+    }
+
+    .title:before {
+        top: 22px;
+        height: 2px;
+    }
+}
