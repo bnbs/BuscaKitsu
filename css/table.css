@@ -48,8 +48,11 @@ tr.character:hover {
 
 .character img {
     background-color: #000000;
+    height: 58px;
+    width: 58px;
     min-height: 58px;
     min-width: 58px;
+    object-fit: cover;
     border-radius: 100%;
     margin-right: 25px;
 }
@@ -72,6 +75,7 @@ tr.character:hover {
 
     th:first-child {
         border: none;
+        padding-left: 98px;
     }
 
     th:last-child {
