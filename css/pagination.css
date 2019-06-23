@@ -21,12 +21,21 @@
     margin-left: 2px;
 }
 
+.arrow.disabled {
+    pointer-events: none;
+    opacity: .5;
+}
+
+#pages {
+    display: flex;
+}
+
 .page-number {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
     background-color: #FFFFFF;
     color: var(--red-color);
-    font-size: 21px;
+    font-size: 16px;
     line-height: 24px;
     font-weight: 400;
     margin: 0 10px;
@@ -35,8 +44,27 @@
     cursor: pointer;
 }
 
+.page-number.active {
+    color: #FFFFFF;
+    background-color: var(--red-color);
+}
+
 .default-flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@media (max-width: 700px) {
+    .pagination {
+        margin: 18px 30px 36px;
+    }
+
+    .arrow-left {
+        margin-right: 50px;
+    }
+
+    .arrow-right {
+        margin-left: 50px;
+    }
 }

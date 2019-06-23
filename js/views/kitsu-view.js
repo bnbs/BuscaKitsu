@@ -2,9 +2,22 @@ class KitsuView {
 
     constructor() {
         this.kitsuController = new KitsuController();
+        this.paginationUtil = new PaginationUtil();
 
-        this.tableFirstColumn = document.querySelector("thead th:first-child");
-        this.tableData = document.querySelector("tbody");
+        this.tableFirstColumn = document.getElementById("firstTableColumn");
+        this.tableData = document.getElementById("tableData");
+        this.prevPage = document.getElementById("arrowLeft");
+        this.nextPage = document.getElementById("arrowRight");
+        this.pageList = document.getElementById("pages");
+        this.loader = document.getElementById("loader");
+
+        this.pagination = {
+            currentPage: 1,
+            maxPagesToShow: 6,
+            pageSize: 10,
+            totalItems: 0
+        }
+        this.isLoadingPage = true;
 
         this.addEventListener();
         this.verifyWindowSize();
@@ -16,21 +29,68 @@ class KitsuView {
         window.addEventListener('resize', () => {
             instance.verifyWindowSize();
         });
+
+        document.getElementById("pages").addEventListener("click", (e) => {
+            if (e.target && e.target.matches("div.page-number")) {
+                instance.pagination.currentPage = +e.target.innerHTML;
+                instance.getCharactersList();
+            }
+        });
+
+        this.prevPage.addEventListener('click', () => {
+            instance.pagination.currentPage = instance.pagination.currentPage - 1;
+            instance.getCharactersList();
+        });
+
+        this.nextPage.addEventListener('click', () => {
+            instance.pagination.currentPage = instance.pagination.currentPage + 1;
+            instance.getCharactersList();
+        });
     }
 
     verifyWindowSize() {
+        const maxPagesToShow = this.pagination.maxPagesToShow;
         if (window.innerWidth <= 700) {
             this.tableFirstColumn.innerHTML = 'Nome';
+            this.pagination.maxPagesToShow = 3;
         } else {
             this.tableFirstColumn.innerHTML = 'Personagem';
+            this.pagination.maxPagesToShow = 6;
+        }
+
+        if (maxPagesToShow !== this.pagination.maxPagesToShow) {
+            this.updatePagination(this.pagination.totalItems);
         }
     }
 
     getCharactersList() {
-        this.kitsuController.getCharactersList((characters) => {
-            console.log('Character: ' + characters);
-            this.addCharacterList(characters);
-        });
+        this.startLoading();
+        this.removeElementChildren(this.tableData);
+        this.kitsuController.getCharactersList(this.pagination.currentPage,
+            (response) => {
+                if (response) {
+                    this.pagination.totalItems = response.totalItems;
+                    this.addCharacterList(response.characters);
+                    this.updatePagination(response.totalItems);
+                }
+                this.isLoadingPage = false;
+                this.stopLoading();
+            }
+        );
+    }
+
+    startLoading() {
+        this.loader.style.display = 'flex';
+        if (this.isLoadingPage) {
+            this.prevPage.style.display = 'none';
+            this.nextPage.style.display = 'none';
+        }
+    }
+
+    stopLoading() {
+        this.loader.style.display = 'none';
+        this.prevPage.style.display = 'block';
+        this.nextPage.style.display = 'block';
     }
 
     addCharacterList(characters) {
@@ -46,20 +106,75 @@ class KitsuView {
 
     addCharacterColumn(row, character) {
         var characterCell = row.insertCell(0);
-        characterCell.innerHTML = `
-            <img src="${character.thumbnail}"/>
+        if (character.thumbnail) {
+            characterCell.innerHTML = `
+                <img src="${character.thumbnail}"/>
+            `;
+        } else {
+            characterCell.innerHTML = `
+                <img />
+            `;
+        }
+        characterCell.innerHTML = characterCell.innerHTML + `
             <h3>
                 ${character.name}
             </h3>
-        `;
+        `
     }
 
     addCharacterDescriptionColumn(row, character) {
         var characterCell = row.insertCell(1);
         characterCell.innerHTML = `
             <h3>
-                ${character.description}
+                ${character.description ? character.description : 'Não há descrição'}
             </h3>
         `;
+    }
+
+    updatePagination(totalItems) {
+        let pagination = this.paginationUtil.getPageList(
+            totalItems,
+            this.pagination.currentPage,
+            this.pagination.pageSize,
+            this.pagination.maxPagesToShow
+        );
+
+        this.removeElementChildren(this.pageList);
+        this.addPagination(pagination.startPage, pagination.endPage);
+
+        this.updateArrowStyle(pagination);
+    }
+
+    updateArrowStyle(pagination) {
+        this.prevPage.classList.remove('disabled');
+        this.nextPage.classList.remove('disabled');
+
+        if (this.pagination.currentPage === pagination.startPage) {
+            this.prevPage.classList.add('disabled');
+        }
+
+        if (this.pagination.currentPage === pagination.totalPages) {
+            this.next.classList.add('disabled');
+        }
+    }
+
+    addPagination(startPage, endPage) {
+        for (let i = startPage; i <= endPage; i++) {
+            let page = document.createElement('div');
+            page.classList.add(...['default-flex-center', 'page-number']);
+            page.innerHTML = i;
+
+            if (i === this.pagination.currentPage) {
+                page.classList.add('active');
+            }
+
+            this.pageList.appendChild(page);
+        }
+    }
+
+    removeElementChildren(element) {
+        while (element.hasChildNodes()) {
+            element.removeChild(element.firstChild);
+        }
     }
 }

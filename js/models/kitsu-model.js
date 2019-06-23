@@ -9,7 +9,7 @@ class KitsuModel {
         for (let i = 0; i < characters.length; i++) {
             this.characters.push({
                 id: characters[i].id,
-                thumbnail: characters[i].attributes.image.original,
+                thumbnail: characters[i].attributes.image ? characters[i].attributes.image.original : undefined,
                 name: characters[i].attributes.name,
                 description: characters[i].attributes.description
             });
