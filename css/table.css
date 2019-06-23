@@ -68,6 +68,13 @@ tr.character:hover {
     max-height: 72px;
 }
 
+#noDataMessage {
+    text-align: center;
+    margin-top: 100px;
+    font-weight: 400;
+    display: none;
+}
+
 @media (max-width: 700px) {
     div.table {
         margin: 0;

@@ -4,12 +4,14 @@ class KitsuView {
         this.kitsuController = new KitsuController();
         this.paginationUtil = new PaginationUtil();
 
+        this.searchInput = document.getElementById("searchInput");
         this.tableFirstColumn = document.getElementById("firstTableColumn");
         this.tableData = document.getElementById("tableData");
         this.prevPage = document.getElementById("arrowLeft");
         this.nextPage = document.getElementById("arrowRight");
         this.pageList = document.getElementById("pages");
         this.loader = document.getElementById("loader");
+        this.noDataMessage = document.getElementById("noDataMessage");
 
         this.pagination = {
             currentPage: 1,
@@ -18,6 +20,7 @@ class KitsuView {
             totalItems: 0
         }
         this.isLoadingPage = true;
+        this.searchText = '';
 
         this.addEventListener();
         this.verifyWindowSize();
@@ -35,6 +38,12 @@ class KitsuView {
                 instance.pagination.currentPage = +e.target.innerHTML;
                 instance.getCharactersList();
             }
+        });
+
+        this.searchInput.addEventListener("keyup", () => {
+            instance.searchText = instance.searchInput.value;
+            instance.pagination.currentPage = 1;
+            instance.getCharactersList();
         });
 
         this.prevPage.addEventListener('click', () => {
@@ -66,13 +75,11 @@ class KitsuView {
     getCharactersList() {
         this.startLoading();
         this.removeElementChildren(this.tableData);
-        this.kitsuController.getCharactersList(this.pagination.currentPage,
+        this.kitsuController.getCharactersList(this.pagination.currentPage, this.searchText,
             (response) => {
-                if (response) {
-                    this.pagination.totalItems = response.totalItems;
-                    this.addCharacterList(response.characters);
-                    this.updatePagination(response.totalItems);
-                }
+                this.pagination.totalItems = response.totalItems;
+                this.addCharacterList(response.characters);
+                this.updatePagination(response.totalItems);
                 this.isLoadingPage = false;
                 this.stopLoading();
             }
@@ -81,6 +88,7 @@ class KitsuView {
 
     startLoading() {
         this.loader.style.display = 'flex';
+        this.noDataMessage.style.display = 'none';
         if (this.isLoadingPage) {
             this.prevPage.style.display = 'none';
             this.nextPage.style.display = 'none';
@@ -89,11 +97,21 @@ class KitsuView {
 
     stopLoading() {
         this.loader.style.display = 'none';
-        this.prevPage.style.display = 'block';
-        this.nextPage.style.display = 'block';
+        if (this.pagination.totalItems !== 0) {
+            this.prevPage.style.display = 'block';
+            this.nextPage.style.display = 'block';
+        }
     }
 
     addCharacterList(characters) {
+
+        if (characters.length === 0) {
+            this.noDataMessage.style.display = 'inline-block';
+            return;
+        }
+
+        this.noDataMessage.style.display = 'none';
+
         for (let i = 0; i < characters.length; i++) {
             let row = this.tableData.insertRow(i);
             row.id = characters[i].id;
@@ -146,6 +164,11 @@ class KitsuView {
     }
 
     updateArrowStyle(pagination) {
+        if (this.pagination.totalItems === 0) {
+            this.prevPage.style.display = 'none';
+            this.nextPage.style.display = 'none';
+        }
+
         this.prevPage.classList.remove('disabled');
         this.nextPage.classList.remove('disabled');
 
@@ -154,7 +177,7 @@ class KitsuView {
         }
 
         if (this.pagination.currentPage === pagination.totalPages) {
-            this.next.classList.add('disabled');
+            this.nextPage.classList.add('disabled');
         }
     }
 

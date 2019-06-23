@@ -6,14 +6,17 @@ class KitsuController {
         this.kitsuModel = new KitsuModel();
     }
 
-    getCharactersList(currentPage, callback) {
+    getCharactersList(currentPage, searchText, callback) {
         const instance = this;
 
         let requestUrl = this.baseUrl + 'characters';
         requestUrl = requestUrl.concat('?page%5Blimit%5D=10');
         requestUrl = requestUrl.concat('&page%5Boffset%5D=' + this.getPageOffset(currentPage));
-        requestUrl = requestUrl.concat('&sort=name');
         requestUrl = requestUrl.concat('&fields%5Bcharacters%5D=name,description,image,mediaCharacters');
+
+        if (searchText || searchText !== '') {
+            requestUrl = requestUrl.concat('&filter%5Bname%5D=' + searchText);
+        }
 
         instance.ajax.open("GET", requestUrl, true);
         instance.ajax.send();
