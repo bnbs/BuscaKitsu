@@ -25,3 +25,9 @@
         width: 100%;
     }
 }
+
+@media (max-width: 320px) {
+    .search {
+        margin: 0 21px 34px;
+    }
+}

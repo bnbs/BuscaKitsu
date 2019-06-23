@@ -19,12 +19,12 @@ header h2 {
     margin: 0;
 }
 
-.title {
+h2.title {
     position: relative;
     font-weight: 900;
 }
 
-.title:before {
+h2.title:before {
     position: absolute;
     left: 0;
     top: 32px;
@@ -48,8 +48,14 @@ header h2 {
         display: none;
     }
 
-    .title:before {
+    h2.title:before {
         top: 22px;
         height: 2px;
+    }
+}
+
+@media (max-width: 320px) {
+    header {
+        margin: 12px 21px 18px;
     }
 }

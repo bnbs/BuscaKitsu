@@ -36,6 +36,7 @@ class KitsuView {
         }
         this.isLoadingPage = true;
         this.searchText = '';
+        this.isModalOpened = false;
 
         this.addEventListener();
         this.verifyWindowSize();
@@ -59,6 +60,7 @@ class KitsuView {
         });
 
         document.querySelector(".close-button").addEventListener("click", () => {
+            instance.isModalOpened = false;
             document.querySelector('.modal-header h2').remove();
             document.querySelectorAll('.list-item').forEach((item) => {
                 item.remove();
@@ -171,12 +173,13 @@ class KitsuView {
 
     showCharacterDetails(characterId, characterName) {
         const instance = this;
+        instance.isModalOpened = true;
         instance.modal.classList.add('show-modal');
         instance.addCharacterTitle(characterName, instance);
         instance.modalLoader.style.display = 'flex'
         this.kitsuController.getCharacterDetails(characterId, (characterDetails) => {
             instance.modalLoader.style.display = 'none';
-            if (characterDetails) {
+            if (characterDetails && instance.isModalOpened) {
                 instance.addCharacterDetails(characterDetails.details, instance);
             }
         });
@@ -207,8 +210,11 @@ class KitsuView {
                 <img src="${characterDetails[i].image}" />
                 <div class="details">
                     <div>
-                        <h3>${characterDetails[i].title}</h3>
-                        ${characterDetails[i].rank ? '<h3>Rank: ' + characterDetails[i].rank + '</h3>' : ''}
+                        <h3 class="title">${characterDetails[i].title}</h3>
+                        ${characterDetails[i].rank
+                            ? '<h3 class="rank">Rank: ' + characterDetails[i].rank + '</h3>'
+                            : ''
+                        }
                     </div>
                     <h5>${characterDetails[i].synopsis}</h5>
                 </div>
