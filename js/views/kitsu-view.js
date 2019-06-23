@@ -23,6 +23,11 @@ class KitsuView {
         this.loader = document.getElementById("loader");
         this.noDataMessage = document.getElementById("noDataMessage");
 
+        this.modal = document.querySelector(".modal");
+        this.modalHeader = document.querySelector(".modal-header");
+        this.modalList = document.getElementById("modalList");
+        this.modalLoader = document.getElementById("modalLoader");
+
         this.pagination = {
             currentPage: 1,
             maxPagesToShow: 6,
@@ -53,6 +58,14 @@ class KitsuView {
             }
         });
 
+        document.querySelector(".close-button").addEventListener("click", () => {
+            document.querySelector('.modal-header h2').remove();
+            document.querySelectorAll('.list-item').forEach((item) => {
+                item.remove();
+            });
+            instance.modal.classList.remove('show-modal');
+        });
+
         this.searchInput.addEventListener("keyup", () => {
             instance.searchText = instance.searchInput.value;
             instance.pagination.currentPage = 1;
@@ -68,6 +81,7 @@ class KitsuView {
             instance.pagination.currentPage = instance.pagination.currentPage + 1;
             instance.getCharactersList();
         });
+
     }
 
     /**
@@ -150,13 +164,58 @@ class KitsuView {
             this.addCharacterDescriptionColumn(row, characters[i]);
 
             row.addEventListener("click", () => {
-                this.showCharacterDetails(characters[i].id);
+                this.showCharacterDetails(characters[i].id, characters[i].name);
             });
         }
     }
 
-    showCharacterDetails(characterId) {
-        this.kitsuController.getCharacterDetails(characterId);
+    showCharacterDetails(characterId, characterName) {
+        const instance = this;
+        instance.modal.classList.add('show-modal');
+        instance.addCharacterTitle(characterName, instance);
+        instance.modalLoader.style.display = 'flex'
+        this.kitsuController.getCharacterDetails(characterId, (characterDetails) => {
+            instance.modalLoader.style.display = 'none';
+            if (characterDetails) {
+                instance.addCharacterDetails(characterDetails.details, instance);
+            }
+        });
+    }
+
+    addCharacterTitle(characterName, instance) {
+        const titleElement = document.createElement('h2');
+        const title = document.createTextNode(characterName);
+        titleElement.appendChild(title);
+        instance.modalHeader.appendChild(titleElement);
+    }
+
+    addCharacterDetails(characterDetails, instance) {
+
+        if (!characterDetails || characterDetails.length === 0) {
+            const noDataText = document.createElement('h2');
+            noDataText.innerText = "Não há mídias para exibir 😢"
+            instance.modalList.appendChild(noDataText);
+            return;
+        }
+
+        for (let i = 0; i < characterDetails.length; i++) {
+
+            const div = document.createElement('div');
+            div.classList.add('list-item');
+
+            div.innerHTML = `
+                <img src="${characterDetails[i].image}" />
+                <div class="details">
+                    <div>
+                        <h3>${characterDetails[i].title}</h3>
+                        ${characterDetails[i].rank ? '<h3>Rank: ' + characterDetails[i].rank + '</h3>' : ''}
+                    </div>
+                    <h5>${characterDetails[i].synopsis}</h5>
+                </div>
+            `;
+
+            instance.modalList.appendChild(div);
+        }
     }
 
     /**

@@ -8,6 +8,7 @@
     <title>Busca Kitsu</title>
 
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/search.css">
     <link rel="stylesheet" href="css/table.css">
@@ -17,6 +18,30 @@
 </head>
 
 <body>
+
+    <!-- Character Details Modal -->
+    <div class="modal">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <span class="close-button">&times;</span>
+            </div>
+
+            <div id="modalList" class="list">
+
+                <!-- Loader -->
+                <div id="modalLoader" class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+                <!-- ! Loader -->
+
+            </div>
+
+        </div>
+    </div>
+    <!-- ! Character Details Modalv-->
 
     <!-- Header -->
     <header>

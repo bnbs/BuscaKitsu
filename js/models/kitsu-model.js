@@ -13,7 +13,8 @@ class KitsuModel {
     constructor() {
         this.characters = [];
         this.selectedCharacterDetails = {
-            mediaLinks: []
+            mediaLinks: [],
+            details: []
         };
     }
 
@@ -59,11 +60,13 @@ class KitsuModel {
      * @param { Array } media links - array of media links
      */
     setMediaLinks(mediaLinks) {
-        const mediaLinksArray = [];
+        this.selectedCharacterDetails = {
+            mediaLinks: [],
+            details: []
+        };
         for (let i = 0; i < mediaLinks.length; i++) {
-            mediaLinksArray.push(mediaLinks[i].relationships.media.links.related);
+            this.selectedCharacterDetails.mediaLinks.push(mediaLinks[i].relationships.media.links.related);
         }
-        this.selectedCharacterDetails.mediaLinks.push(...mediaLinksArray);
     }
 
     /**
@@ -73,5 +76,19 @@ class KitsuModel {
      */
     getSelectedCharacterDetails() {
         return this.selectedCharacterDetails;
+    }
+
+    /**
+     * Set Selected Character Details
+     *
+     * @param { any } characterDetails - selected character details
+     */
+    setSelectedCharacterDetails(characterDetails) {
+        this.selectedCharacterDetails.details.push({
+            title: characterDetails.attributes.canonicalTitle,
+            image: characterDetails.attributes.posterImage.small,
+            synopsis: characterDetails.attributes.synopsis,
+            rank: characterDetails.attributes.ratingRank
+        });
     }
 }
