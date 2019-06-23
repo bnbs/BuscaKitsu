@@ -1,11 +1,28 @@
+/**
+ * Kitsu Controller
+ *
+ * @author Bruna Silva
+ *
+ * @since 22/06/2019
+ */
 class KitsuController {
 
+    /**
+     * Constructor
+     */
     constructor() {
         this.baseUrl = 'https://kitsu.io/api/edge/';
         this.ajax = new XMLHttpRequest();
         this.kitsuModel = new KitsuModel();
     }
 
+    /**
+     * Get Characters List
+     *
+     * @param { number } currentPage - current selected page
+     * @param { string } searchText - search text
+     * @param { function } callback - function to be called after getting the request response
+     */
     getCharactersList(currentPage, searchText, callback) {
         const instance = this;
 
@@ -32,11 +49,22 @@ class KitsuController {
         }
     }
 
+    /**
+     * Get Page Offset
+     *
+     * @param { number } currentPage - current selected page
+     * @returns { number } page offset
+     */
     getPageOffset(currentPage) {
         if (currentPage === 1) return 0;
         else return (currentPage - 1) * 10;
     }
 
+    /**
+     * Get Characters
+     *
+     * @returns { Array } characters list
+     */
     getCharacters() {
         return this.kitsuModel.getCharacters();
     }

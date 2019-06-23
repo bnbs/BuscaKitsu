@@ -1,5 +1,15 @@
+/**
+ * Kitsu View
+ *
+ * @author Bruna Silva
+ *
+ * @since 22/06/2019
+ */
 class KitsuView {
 
+    /**
+     * Constructor
+     */
     constructor() {
         this.kitsuController = new KitsuController();
         this.paginationUtil = new PaginationUtil();
@@ -27,6 +37,9 @@ class KitsuView {
         this.getCharactersList();
     }
 
+    /**
+     * Add Event Listener to elements
+     */
     addEventListener() {
         const instance = this;
         window.addEventListener('resize', () => {
@@ -57,6 +70,9 @@ class KitsuView {
         });
     }
 
+    /**
+     * Verify Window Size and update the layout correctly
+     */
     verifyWindowSize() {
         const maxPagesToShow = this.pagination.maxPagesToShow;
         if (window.innerWidth <= 700) {
@@ -72,6 +88,9 @@ class KitsuView {
         }
     }
 
+    /**
+     * Get Characters List
+     */
     getCharactersList() {
         this.startLoading();
         this.removeElementChildren(this.tableData);
@@ -86,6 +105,9 @@ class KitsuView {
         );
     }
 
+    /**
+     * Start Loading
+     */
     startLoading() {
         this.loader.style.display = 'flex';
         this.noDataMessage.style.display = 'none';
@@ -95,6 +117,9 @@ class KitsuView {
         }
     }
 
+    /**
+     * Stop Loading
+     */
     stopLoading() {
         this.loader.style.display = 'none';
         if (this.pagination.totalItems !== 0) {
@@ -103,6 +128,11 @@ class KitsuView {
         }
     }
 
+    /**
+     * Add Character List
+     *
+     * @param { Array } characters - characters list
+     */
     addCharacterList(characters) {
 
         if (characters.length === 0) {
@@ -122,6 +152,12 @@ class KitsuView {
         }
     }
 
+    /**
+     * Add Character Column
+     *
+     * @param { any } row - row that will contain the character information
+     * @param { any } character - character information
+     */
     addCharacterColumn(row, character) {
         var characterCell = row.insertCell(0);
         if (character.thumbnail) {
@@ -140,6 +176,12 @@ class KitsuView {
         `
     }
 
+    /**
+     * Add Character Description Column
+     *
+     * @param { any } row - row that will contain the character information
+     * @param { any } character - character information
+     */
     addCharacterDescriptionColumn(row, character) {
         var characterCell = row.insertCell(1);
         characterCell.innerHTML = `
@@ -149,6 +191,11 @@ class KitsuView {
         `;
     }
 
+    /**
+     * Update Pagination
+     *
+     * @param { number } totalItems - number of characters
+     */
     updatePagination(totalItems) {
         let pagination = this.paginationUtil.getPageList(
             totalItems,
@@ -163,6 +210,11 @@ class KitsuView {
         this.updateArrowStyle(pagination);
     }
 
+    /**
+     * Update Arrow Style
+     *
+     * @param { any } pagination - pagination information
+     */
     updateArrowStyle(pagination) {
         if (this.pagination.totalItems === 0) {
             this.prevPage.style.display = 'none';
@@ -181,6 +233,12 @@ class KitsuView {
         }
     }
 
+    /**
+     * Add Pagination
+     *
+     * @param { number } startPage - pagination start page
+     * @param { number } endPage - pagination end page
+     */
     addPagination(startPage, endPage) {
         for (let i = startPage; i <= endPage; i++) {
             let page = document.createElement('div');
@@ -195,6 +253,11 @@ class KitsuView {
         }
     }
 
+    /**
+     * Remove Element Children
+     *
+     * @param { Element } element - DOM Element
+     */
     removeElementChildren(element) {
         while (element.hasChildNodes()) {
             element.removeChild(element.firstChild);

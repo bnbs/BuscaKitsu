@@ -1,9 +1,24 @@
+/**
+ * Kitsu Model
+ *
+ * @author Bruna Silva
+ *
+ * @since 22/06/2019
+ */
 class KitsuModel {
 
+    /**
+     * Constructor
+     */
     constructor() {
         this.characters = [];
     }
 
+    /**
+     * Set Characters
+     *
+     * @param { Array } characters - characters list
+     */
     setCharacters(characters) {
         this.characters = [];
         for (let i = 0; i < characters.length; i++) {
@@ -16,6 +31,11 @@ class KitsuModel {
         }
     }
 
+    /**
+     * Get Characters
+     *
+     * @returns { Array } characters list
+     */
     getCharacters() {
         return this.characters;
     }
