@@ -12,6 +12,9 @@ class KitsuModel {
      */
     constructor() {
         this.characters = [];
+        this.selectedCharacterDetails = {
+            mediaLinks: []
+        };
     }
 
     /**
@@ -26,7 +29,8 @@ class KitsuModel {
                 id: characters[i].id,
                 thumbnail: characters[i].attributes.image ? characters[i].attributes.image.original : undefined,
                 name: characters[i].attributes.name,
-                description: characters[i].attributes.description
+                description: characters[i].attributes.description,
+                media: characters[i].relationships.mediaCharacters.links.related
             });
         }
     }
@@ -38,5 +42,36 @@ class KitsuModel {
      */
     getCharacters() {
         return this.characters;
+    }
+
+    /**
+     * Get Media Link
+     *
+     * @returns { string } media link
+     */
+    getMediaLink(charactersId) {
+        return this.characters.find(({ id }) => id === charactersId).media;
+    }
+
+    /**
+     * Set Media Link
+     *
+     * @param { Array } media links - array of media links
+     */
+    setMediaLinks(mediaLinks) {
+        const mediaLinksArray = [];
+        for (let i = 0; i < mediaLinks.length; i++) {
+            mediaLinksArray.push(mediaLinks[i].relationships.media.links.related);
+        }
+        this.selectedCharacterDetails.mediaLinks.push(...mediaLinksArray);
+    }
+
+    /**
+     * Get Selected Character Details
+     *
+     * @return { any } selected character details
+     */
+    getSelectedCharacterDetails() {
+        return this.selectedCharacterDetails;
     }
 }

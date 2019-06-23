@@ -68,4 +68,46 @@ class KitsuController {
     getCharacters() {
         return this.kitsuModel.getCharacters();
     }
+
+    getCharacterDetails(characterId) {
+        const instance = this;
+        const mediaUrl = this.kitsuModel.getMediaLink(characterId);
+
+        instance.ajax.open("GET", mediaUrl, true);
+        instance.ajax.send();
+        instance.ajax.onreadystatechange = function () {
+
+            if (instance.ajax.readyState === 4 && instance.ajax.status === 200) {
+                const data = JSON.parse(instance.ajax.responseText).data;
+                instance.kitsuModel.setMediaLinks(data);
+                instance.getCharacterMediaLinks(() => {
+                    console.log('chega');
+                });
+            }
+        }
+    }
+
+    getCharacterMediaLinks(callback) {
+        const instance = this;
+        const mediaLinks = instance.kitsuModel.getSelectedCharacterDetails().mediaLinks;
+        let finishedRequests = 0;
+        for (let i = 0; i < mediaLinks.length; i++) {
+
+            instance.ajax.open("GET", mediaLinks[i], true);
+            instance.ajax.send();
+            instance.ajax.onreadystatechange = function () {
+
+                if (instance.ajax.readyState === 4 && instance.ajax.status === 200) {
+                    console.log(JSON.parse(instance.ajax.responseText).data);
+                    finishedRequests++;
+                } else if (instance.ajax.readyState === 4) {
+                    finishedRequests++;
+                }
+
+                if (finishedRequests === mediaLinks.length) {
+                    callback();
+                }
+            }
+        }
+    }
 }

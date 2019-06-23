@@ -144,12 +144,19 @@ class KitsuView {
 
         for (let i = 0; i < characters.length; i++) {
             let row = this.tableData.insertRow(i);
-            row.id = characters[i].id;
             row.classList = ['character'];
 
             this.addCharacterColumn(row, characters[i]);
             this.addCharacterDescriptionColumn(row, characters[i]);
+
+            row.addEventListener("click", () => {
+                this.showCharacterDetails(characters[i].id);
+            });
         }
+    }
+
+    showCharacterDetails(characterId) {
+        this.kitsuController.getCharacterDetails(characterId);
     }
 
     /**
