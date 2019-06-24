@@ -21,6 +21,9 @@
 }
 
 @media (max-width: 490px) {
+    .search {
+        margin: 0 42px 12px;
+    }
     .search input {
         width: 100%;
     }
@@ -28,6 +31,6 @@
 
 @media (max-width: 320px) {
     .search {
-        margin: 0 21px 34px;
+        margin: 0 21px 12px;
     }
 }

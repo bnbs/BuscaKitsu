@@ -23,7 +23,7 @@
 
 .arrow.disabled {
     pointer-events: none;
-    opacity: .5;
+    opacity: .35;
 }
 
 #pages {
@@ -35,7 +35,7 @@
     height: 42px;
     background-color: #FFFFFF;
     color: var(--red-color);
-    font-size: 16px;
+    font-size: 12px;
     line-height: 24px;
     font-weight: 400;
     margin: 0 10px;
