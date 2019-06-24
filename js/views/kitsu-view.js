@@ -27,6 +27,7 @@ class KitsuView {
         this.modalHeader = document.querySelector(".modal-header");
         this.modalList = document.getElementById("modalList");
         this.modalLoader = document.getElementById("modalLoader");
+        this.modalContent = document.querySelector(".modal-content");
 
         this.pagination = {
             currentPage: 1,
@@ -37,6 +38,8 @@ class KitsuView {
         this.isLoadingPage = true;
         this.searchText = '';
         this.isModalOpened = false;
+        this.currentDetailsPage = 1;
+        this.selectedCharacter = {};
 
         this.addEventListener();
         this.verifyWindowSize();
@@ -61,6 +64,12 @@ class KitsuView {
 
         document.querySelector(".close-button").addEventListener("click", () => {
             instance.isModalOpened = false;
+            const midiasButton = document.querySelector('.midias-button');
+
+            if(midiasButton){
+                midiasButton.remove();
+            }
+
             document.querySelector('.modal-header h2').remove();
             document.querySelectorAll('.list-item').forEach((item) => {
                 item.remove();
@@ -166,25 +175,49 @@ class KitsuView {
             this.addCharacterDescriptionColumn(row, characters[i]);
 
             row.addEventListener("click", () => {
+                this.currentDetailsPage = 1;
+                this.selectedCharacter = characters[i];
                 this.showCharacterDetails(characters[i].id, characters[i].name);
             });
         }
     }
 
+    /**
+     * Show Character Details
+     *
+     * @param { number } characterId - characters id
+     * @param { string } characterName - characters name
+     */
     showCharacterDetails(characterId, characterName) {
+
         const instance = this;
-        instance.isModalOpened = true;
-        instance.modal.classList.add('show-modal');
-        instance.addCharacterTitle(characterName, instance);
-        instance.modalLoader.style.display = 'flex'
-        this.kitsuController.getCharacterDetails(characterId, (characterDetails) => {
-            instance.modalLoader.style.display = 'none';
-            if (characterDetails && instance.isModalOpened) {
-                instance.addCharacterDetails(characterDetails.details, instance);
+        if (instance.currentDetailsPage === 1) {
+            instance.isModalOpened = true;
+            instance.modal.classList.add('show-modal');
+            instance.addCharacterTitle(characterName, instance);
+            instance.modalLoader.style.display = 'flex'
+        } else if (instance.currentDetailsPage > 1) {
+            document.querySelector('.midias-button').disabled = true;
+            document.querySelector('.spinner-border').style.display= 'inline-block';
+        }
+
+        this.kitsuController.getCharacterDetails(characterId, instance.currentDetailsPage,
+            (characterDetails) => {
+                instance.modalLoader.style.display = 'none';
+                if (characterDetails && instance.isModalOpened) {
+                    instance.addCharacterDetails(characterDetails.details, instance);
+                    instance.addLoadMoreButton((characterDetails.numberOfItems > (instance.currentDetailsPage * 10)), instance);
+                }
             }
-        });
+        );
     }
 
+    /**
+     * Add Character Title
+     *
+     * @param { string } characterName - characters name
+     * @param { any } instance - this
+     */
     addCharacterTitle(characterName, instance) {
         const titleElement = document.createElement('h2');
         const title = document.createTextNode(characterName);
@@ -192,6 +225,12 @@ class KitsuView {
         instance.modalHeader.appendChild(titleElement);
     }
 
+    /**
+     * Add Character Details
+     *
+     * @param { Array } characterDetails - character details
+     * @param { any } instance - this
+     */
     addCharacterDetails(characterDetails, instance) {
 
         if (!characterDetails || characterDetails.length === 0) {
@@ -201,8 +240,8 @@ class KitsuView {
             return;
         }
 
-        for (let i = 0; i < characterDetails.length; i++) {
-
+        const initialPosition = (instance.currentDetailsPage - 1) * 10;
+        for (let i = initialPosition; i < characterDetails.length; i++) {
             const div = document.createElement('div');
             div.classList.add('list-item');
 
@@ -221,6 +260,37 @@ class KitsuView {
             `;
 
             instance.modalList.appendChild(div);
+        }
+    }
+
+    /**
+     * Add Load More Button
+     *
+     * @param { boolean } thereAreMoreItems - if there are more items to show
+     * @param { any } instance - this
+     */
+    addLoadMoreButton(thereAreMoreItems, instance) {
+        if (instance.isModalOpened) {
+            if (thereAreMoreItems && instance.currentDetailsPage === 1) {
+                const button = document.createElement('button');
+                button.innerText = 'Carregar mais mídias'
+                button.classList.add('midias-button');
+                button.addEventListener('click', () => {
+                    instance.currentDetailsPage++;
+                    instance.showCharacterDetails(instance.selectedCharacter.id, instance.selectedCharacter.name);
+                })
+                instance.modalContent.appendChild(button);
+
+                const spanSpinner = document.createElement('span');
+                spanSpinner.classList.add('spinner-border');
+                spanSpinner.style.display = 'none';
+                button.appendChild(spanSpinner);
+            } else if (!thereAreMoreItems && instance.currentDetailsPage > 1) {
+                document.querySelector('.midias-button').remove();
+            } else if (instance.currentDetailsPage > 1) {
+                document.querySelector('.midias-button').disabled = false;
+                document.querySelector('.spinner-border').style.display= 'none';
+            }
         }
     }
 

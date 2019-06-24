@@ -74,19 +74,28 @@ class KitsuController {
     return this.kitsuModel.getCharacters();
   }
 
-  getCharacterDetails(characterId, callback) {
+  /**
+   * Get Characters Details
+   *
+   * @param { string } characterId - character id
+   * @param { number } currentPage - current selected page
+   * @param { function } callback - function to be called after getting the request response
+   */
+  getCharacterDetails(characterId, currentPage, callback) {
     const instance = this;
-    const mediaUrl = this.kitsuModel.getMediaLink(characterId);
+    let mediaUrl = this.kitsuModel.getMediaLink(characterId);
+    mediaUrl = mediaUrl.concat('?page%5Blimit%5D=10');
+    mediaUrl = mediaUrl.concat('&page%5Boffset%5D=' + instance.getPageOffset(currentPage));
 
     instance.ajax.open("GET", mediaUrl, true);
     instance.ajax.send();
     instance.ajax.onreadystatechange = function() {
 
       if (instance.ajax.readyState === 4 && instance.ajax.status === 200) {
-        const data = JSON.parse(instance.ajax.responseText).data;
+        const response = JSON.parse(instance.ajax.responseText);
 
-        instance.kitsuModel.setMediaLinks(data);
-        instance.getCharacterMediaLinks(0, () => {
+        instance.kitsuModel.setMediaLinks(response.data, currentPage === 1, response.meta.count);
+        instance.getCharacterMediaLinks(instance.getPageOffset(currentPage), () => {
             callback(instance.kitsuModel.getSelectedCharacterDetails());
         });
       } else if (instance.ajax.readyState === 4) {
@@ -95,6 +104,12 @@ class KitsuController {
     };
   }
 
+  /**
+   * Get Characters Media Link
+   *
+   * @param { number } pos - media position
+   * @param { function } callback - function to be called after getting the request response
+   */
   getCharacterMediaLinks(pos, callback) {
     const instance = this;
     const mediaLinks = instance.kitsuModel.getSelectedCharacterDetails().mediaLinks;

@@ -58,12 +58,17 @@ class KitsuModel {
      * Set Media Link
      *
      * @param { Array } media links - array of media links
+     * @param { boolean } isFirstPage - if is the first page or not
+     * @param { number } numberOfItems - total number of items
      */
-    setMediaLinks(mediaLinks) {
-        this.selectedCharacterDetails = {
-            mediaLinks: [],
-            details: []
-        };
+    setMediaLinks(mediaLinks, isFirstPage, numberOfItems) {
+        if (isFirstPage) {
+            this.selectedCharacterDetails = {
+                mediaLinks: [],
+                details: []
+            };
+        }
+        this.selectedCharacterDetails.numberOfItems = numberOfItems;
         for (let i = 0; i < mediaLinks.length; i++) {
             this.selectedCharacterDetails.mediaLinks.push(mediaLinks[i].relationships.media.links.related);
         }
